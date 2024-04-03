@@ -12,6 +12,7 @@ import UserType from "../server/utils/UserType";
 
 const Home = () => {
   const [posts, setPosts] = useState<any[]>([]);
+  const [searchText, setSearchText] = useState("");
   const auth = useAuthUser<UserType>();
 
   useEffect(() => {
@@ -32,6 +33,23 @@ const Home = () => {
 
     getPosts();
   }, []);
+
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      getSearch()
+    }, 1500);
+
+    return () => clearTimeout(delay)
+  }, [searchText])
+
+  const getSearch = async () => {
+    try {
+      const response = await http.get(`/api/posts/${searchText}`)
+      setPosts(response.data)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   const checkPosts = () => {
     if (posts === undefined || posts.length === 0) {
@@ -55,7 +73,7 @@ const Home = () => {
 
   return (
     <div>
-      <Navbar />
+      <Navbar setSearchText={setSearchText} search={getSearch} />
       {/* Posts list container */}
       <div className="container" style={{ maxWidth: "85%" }}>
         {checkPosts()}

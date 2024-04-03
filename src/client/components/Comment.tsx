@@ -7,8 +7,9 @@ import {
   BiDownvote,
   BiSolidDownvote,
   BiComment,
+  BiDotsHorizontalRounded,
 } from "react-icons/bi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 
 import "../css/custom-styles.css";
@@ -17,13 +18,19 @@ import http from "../../server/utils/axios";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import UserType from "../../server/utils/UserType";
 import Markdown from "react-markdown";
+import { FaEdit, FaExclamationCircle, FaTrash } from "react-icons/fa";
 
-const Comment = (props: { id: string }) => {
+const Comment = (props: {
+  id: string,
+  isOwner?: boolean,
+  isDeleted?: boolean,
+}) => {
   const [username, setUsername] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [date, setDate] = useState<Date>();
 
   const auth = useAuthUser<UserType>();
+  const navigate = useNavigate();
 
   const [voteCount, setVoteCount] = useState<number>(0);
   const [isUpvoted, setIsUpvoted] = useState<boolean>(false);
@@ -32,6 +39,9 @@ const Comment = (props: { id: string }) => {
   const [isReplying, setIsReplying] = useState(false);
   const [replies, setReplies] = useState<any[]>([]);
 
+  const [isSetting, setIsSetting] = useState(false);
+  const [isOwner, setIsOwner] = useState(props.isOwner || false);
+  
   useEffect(() => {
     const getReplies = async () => {
       try {
@@ -129,6 +139,38 @@ const Comment = (props: { id: string }) => {
     }
   };
 
+  const handleSetting = () => {
+    setIsSetting(!isSetting);
+  };
+
+  const handleDelete = async () => {
+    if (confirm("Are you sure you want to delete your comment forever?")) {
+      try {
+        const response = await http.delete(`/api/post/${props.id}`);
+        if (response.status === 200) {
+          navigate(0);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
+  const getSettings = () => {
+    return (
+      <div className="postSetting">
+        <IconContext.Provider value={{ size: "0.9em" }}>
+          {isOwner && (
+            <div id="delete" onClick={() => handleDelete()}>
+              <FaTrash />
+              <span>Delete</span>
+            </div>
+          )}
+        </IconContext.Provider>
+      </div>
+    );
+  };
+
   return (
     <div
       className=""
@@ -155,9 +197,23 @@ const Comment = (props: { id: string }) => {
             </Link>
             <span>{moment(date).format("MMMM D, YYYY")}</span>
           </div>
+          <div
+            className="d-md-flex d-lg-flex justify-content-md-end justify-content-lg-end"
+            style={{ width: "100px", display: "flex" }}
+          >
+
+            {isOwner && !props.isDeleted && (<IconContext.Provider value={{ size: "1em" }}>
+              <BiDotsHorizontalRounded
+                onClick={() => handleSetting()}
+                style={{ cursor: "pointer" }}
+              />
+            </IconContext.Provider>)}
+
+            {isSetting && isOwner && getSettings()}
+          </div>
         </div>
 
-        <Markdown className="markdown">{content}</Markdown>
+        <Markdown className="markdown">{props.isDeleted ? "*comment deleted.*" : content}</Markdown>
 
         {/* like and comment */}
         <div

@@ -17,6 +17,21 @@ postRouter.get("/api/posts", async (req, res) => {
   }
 });
 
+postRouter.get("/api/posts/:search", async (req, res) => {
+  const data = req.params;
+  console.log(data);
+  try {
+    const posts = await PostModel.find({
+      title: { $regex: data.search, $options: "i" },
+    });
+    console.log(posts);
+    res.send(posts);
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+});
+
 postRouter.get("/api/posts/reported", async (req, res) => {
   try {
     const posts = await PostModel.find({ reports: { $ne: [] } });
@@ -27,14 +42,16 @@ postRouter.get("/api/posts/reported", async (req, res) => {
       .project({
         _id: 1,
         reportsCount: {
-          $size: "$reports"
-        }
+          $size: "$reports",
+        },
       });
-      
-    res.send(JSON.stringify({
-      posts: posts,
-      reportCounts: reportCounts
-    }));
+
+    res.send(
+      JSON.stringify({
+        posts: posts,
+        reportCounts: reportCounts,
+      })
+    );
   } catch (err) {
     res.sendStatus(500);
   }
