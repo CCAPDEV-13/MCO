@@ -19,12 +19,10 @@ postRouter.get("/api/posts", async (req, res) => {
 
 postRouter.get("/api/posts/:search", async (req, res) => {
   const data = req.params;
-  console.log(data);
   try {
     const posts = await PostModel.find({
       title: { $regex: data.search, $options: "i" },
     });
-    console.log(posts);
     res.send(posts);
   } catch (err) {
     console.error(err);
