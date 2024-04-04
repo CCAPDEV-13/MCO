@@ -9,7 +9,4 @@ export default defineConfig({
       include: "**/*.tsx",
     }),
   ],
-  define: {
-    'process.env': process.env
-  }
 });
