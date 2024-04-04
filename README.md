@@ -17,15 +17,3 @@
 4. That's pretty much it, glhf
 ---
 
-__Notes__ _(Feel free to add stuff)_
-
-- React, express and all front-end stuff has been added.
-- I'm still figuring out color schemes, and the entire thing is built on bootstrap. If you want an easy way of making your own thing with bootstrap, I recommend using Bootstrap Studio (free with the Github student thing) and export the html, copy and paste what you need and edit the syntax.
-- Hopefully most or all of front-end has been moved to react, but I will double check.
-- Axios is used for connecting the front-end to the back-end. Look up how to use axios and try following some guides online. This also means that there are some props in the react front-end that might be better removed. A lot of the front-end data is very rudimentary and temporary.
-
-__TODO__
-
-- [ ] Sign-up page front-end, field validation
-- [ ] Import mongodb database
-- [ ] Add Functionality for each page
