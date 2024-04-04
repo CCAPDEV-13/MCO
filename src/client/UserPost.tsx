@@ -61,13 +61,12 @@ const UserPost = () => {
     }
 
     let commentList: React.ReactElement[] = [];
-
     comments.map((comment) => {
       commentList.push(
         <Comment
           key={comment._id}
           id={comment._id}
-          isOwner={comment.commentorID === auth?.id}
+          isOwner={comment.commentorID == auth?.id}
           isDeleted={comment.isDeleted}
         />
       );

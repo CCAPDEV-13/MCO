@@ -35,13 +35,13 @@ const Comment = (props: {
   const [voteCount, setVoteCount] = useState<number>(0);
   const [isUpvoted, setIsUpvoted] = useState<boolean>(false);
   const [isDownvoted, setIsDownvoted] = useState<boolean>(false);
-  const [isDeleted, setIsDeleted] = useState<boolean>(false);
+  const [isDeleted, setIsDeleted] = useState<boolean>(props.isDeleted);
   
   const [isReplying, setIsReplying] = useState(false);
   const [replies, setReplies] = useState<any[]>([]);
 
   const [isSetting, setIsSetting] = useState(false);
-  const [isOwner, setIsOwner] = useState(props.isOwner || false);
+  const [isOwner, setIsOwner] = useState<boolean | undefined>(props.isOwner);
 
   const settingsRef = useRef<HTMLDivElement>(null);
   
@@ -269,7 +269,7 @@ const Comment = (props: {
           />
         )}
         {replies.map((reply) => {
-          return <Comment key={reply._id} id={reply._id} isDeleted={isDeleted}/>;
+          return <Comment key={reply._id} id={reply._id} isDeleted={isDeleted} isOwner={reply.commentorID == auth?.id}/>;
         })}
       </div>
     </div>
