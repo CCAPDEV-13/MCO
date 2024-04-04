@@ -10,6 +10,8 @@ import userRouter from "./routes/user-routes.js";
 import postRouter from "./routes/post-routes.js";
 import commentRouter from "./routes/comment-routes.js";
 
+import serverless from "serverless-http"
+
 
 const PORT = 3000;
 
@@ -25,6 +27,8 @@ mongoose.connect(db_url);
 app.use(userRouter)
 app.use(postRouter)
 app.use(commentRouter)
+
+export const handler = serverless(app)
 
 ViteExpress.listen(app, PORT, () =>
   console.log("Server is listening on port 3000...")
