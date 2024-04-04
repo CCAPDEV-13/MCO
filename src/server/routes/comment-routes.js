@@ -15,6 +15,7 @@ commentRouter.post("/api/comment", async (req, res) => {
     upvotes: [data.userId],
     downvotes: [],
     comments: [],
+    isDeleted: false,
   });
 
   try {
