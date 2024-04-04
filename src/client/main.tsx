@@ -17,6 +17,7 @@ import AuthProvider from "react-auth-kit/AuthProvider";
 import store from "../server/utils/authStore";
 import AuthOutlet from "@auth-kit/react-router/AuthOutlet";
 import Admin from "./Admin";
+import About from "./about";
 
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
@@ -28,6 +29,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/about" element={<About />} />
 
           {/* Protected routes */}
           <Route element={<AuthOutlet fallbackPath="/login" />}>

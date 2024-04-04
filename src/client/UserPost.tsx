@@ -62,7 +62,6 @@ const UserPost = () => {
 
     let commentList: React.ReactElement[] = [];
 
-    
     comments.map((comment) => {
       commentList.push(
         <Comment

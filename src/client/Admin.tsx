@@ -13,11 +13,12 @@ const Admin = () => {
 	useEffect(() => {
 		const getReportedPosts = async () => {
 			try {
-				const response = await http.get("/api/posts/reported");
-				console.log("data ", response.data)
-				setPosts(response.data.posts)
+				const response = await http.get("/api/reported");
+				setPosts(response.data.reportedPosts)
 				setPostReportsCount(response.data.reportCounts)
-			} catch (err) {}
+			} catch (err) {
+				console.error(err)
+			}
 		};
 	
 		getReportedPosts()

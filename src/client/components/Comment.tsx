@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import pfp from "../assets/user-pfp.png";
 import { IconContext } from "react-icons";
 import {
@@ -23,7 +23,7 @@ import { FaEdit, FaExclamationCircle, FaTrash } from "react-icons/fa";
 const Comment = (props: {
   id: string,
   isOwner?: boolean,
-  isDeleted?: boolean,
+  isDeleted: boolean,
 }) => {
   const [username, setUsername] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -35,12 +35,15 @@ const Comment = (props: {
   const [voteCount, setVoteCount] = useState<number>(0);
   const [isUpvoted, setIsUpvoted] = useState<boolean>(false);
   const [isDownvoted, setIsDownvoted] = useState<boolean>(false);
-
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
+  
   const [isReplying, setIsReplying] = useState(false);
   const [replies, setReplies] = useState<any[]>([]);
 
   const [isSetting, setIsSetting] = useState(false);
   const [isOwner, setIsOwner] = useState(props.isOwner || false);
+
+  const settingsRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const getReplies = async () => {
@@ -51,6 +54,7 @@ const Comment = (props: {
         setContent(data.body);
         setDate(data.createdAt);
         setUsername(data.commentorID.username);
+        setIsDeleted(data.isDeleted)
       } catch (err) {}
     };
 
@@ -75,6 +79,14 @@ const Comment = (props: {
       }
     }
     getVotes()
+
+    const clickHandler = (e: MouseEvent) => {
+      if (!settingsRef?.current?.contains(e.target as Node)) {
+        setIsSetting(false);
+      }
+    }
+
+    document.addEventListener("mousedown", clickHandler)
   }, []);
 
   const handleSubmit = async (reply: String) => {
@@ -146,10 +158,9 @@ const Comment = (props: {
   const handleDelete = async () => {
     if (confirm("Are you sure you want to delete your comment forever?")) {
       try {
-        const response = await http.delete(`/api/post/${props.id}`);
-        if (response.status === 200) {
-          navigate(0);
-        }
+        const response = await http.patch(`/api/comment/${props.id}`);
+        setIsDeleted(true)
+        setIsSetting(false)
       } catch (err) {
         console.error(err);
       }
@@ -158,7 +169,7 @@ const Comment = (props: {
 
   const getSettings = () => {
     return (
-      <div className="postSetting">
+      <div className="postSetting" ref={settingsRef}>
         <IconContext.Provider value={{ size: "0.9em" }}>
           {isOwner && (
             <div id="delete" onClick={() => handleDelete()}>
@@ -202,7 +213,7 @@ const Comment = (props: {
             style={{ width: "100px", display: "flex" }}
           >
 
-            {isOwner && !props.isDeleted && (<IconContext.Provider value={{ size: "1em" }}>
+            {isOwner && !isDeleted && (<IconContext.Provider value={{ size: "1em" }}>
               <BiDotsHorizontalRounded
                 onClick={() => handleSetting()}
                 style={{ cursor: "pointer" }}
@@ -213,7 +224,7 @@ const Comment = (props: {
           </div>
         </div>
 
-        <Markdown className="markdown">{props.isDeleted ? "*comment deleted.*" : content}</Markdown>
+        <Markdown className="markdown">{isDeleted ? "*comment deleted.*" : content}</Markdown>
 
         {/* like and comment */}
         <div
@@ -258,7 +269,7 @@ const Comment = (props: {
           />
         )}
         {replies.map((reply) => {
-          return <Comment key={reply._id} id={reply._id} />;
+          return <Comment key={reply._id} id={reply._id} isDeleted={isDeleted}/>;
         })}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, response } from "express";
 import { CommentModel, PostModel } from "../schemas.js";
 import mongoose from "mongoose";
 const postRouter = Router();
@@ -30,27 +30,37 @@ postRouter.get("/api/posts/:search", async (req, res) => {
   }
 });
 
-postRouter.get("/api/posts/reported", async (req, res) => {
+postRouter.get("/api/reported", async (req, res) => {
   try {
     const posts = await PostModel.find({ reports: { $ne: [] } });
-    const reportCounts = await PostModel.aggregate()
-      .match({
-        reports: { $ne: [] },
-      })
-      .project({
-        _id: 1,
-        reportsCount: {
-          $size: "$reports",
-        },
-      });
 
-    res.send(
-      JSON.stringify({
-        posts: posts,
-        reportCounts: reportCounts,
-      })
-    );
+    try {
+      const reportCounts = await PostModel.aggregate()
+        .match({
+          reports: { $ne: [] },
+        })
+        .project({
+          _id: 1,
+          reportsCount: {
+            $size: "$reports",
+          },
+        });
+
+      res.send(
+        JSON.stringify({
+          reportedPosts: posts,
+          reportCounts: reportCounts,
+        })
+      );
+
+    } catch (err) {
+      console.error(err);
+      res.sendStatus(500);
+    }
+
+    // res.send(posts)
   } catch (err) {
+    console.error(err);
     res.sendStatus(500);
   }
 });

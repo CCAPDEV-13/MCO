@@ -14,7 +14,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "../css/custom-styles.css";
 
 // hooks
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import moment from "moment";
 import axios from "axios";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
@@ -44,8 +44,8 @@ const Post = (props: {
   const [isDownvoted, setIsDownvoted] = useState<boolean>(false);
 
   const auth = useAuthUser<UserType>();
-
   const navigate = useNavigate();
+  const settingsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const getPost = async () => {
@@ -88,6 +88,14 @@ const Post = (props: {
     };
 
     getVotes();
+
+    const clickHandler = (e: MouseEvent) => {
+      if (!settingsRef?.current?.contains(e.target as Node)) {
+        setIsSetting(false);
+      }
+    }
+
+    document.addEventListener("mousedown", clickHandler)
   });
 
   const checkIfUpvoted = () => {
@@ -188,7 +196,7 @@ const Post = (props: {
 
   const getSettings = () => {
     return (
-      <div className="postSetting">
+      <div className="postSetting" ref={settingsRef}>
         <IconContext.Provider value={{ size: "0.9em" }}>
           {!isOwner && (
             <div id="report" onClick={() => handleReport()}>

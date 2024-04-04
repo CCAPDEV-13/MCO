@@ -21,7 +21,6 @@ const TextEditor = (props: {
     if (props.editorText) {
       setEditorText(props.editorText);
     }
-    console.log(props.editorText)
   }, [props.editorText])
 
   const handleChange = (value: string) => {
