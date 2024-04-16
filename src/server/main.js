@@ -21,8 +21,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: "https://edureview.onrender.com/",
-  headers: ["Content-Type"],
-  credentials: true,
+  Headers: {
+    "Access-Control-Allow-Origin": "*",
+  }
 }));
 app.use(cookieParser());
 
