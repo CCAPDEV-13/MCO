@@ -54,6 +54,7 @@ userRouter.post("/api/login", async (req, res) => {
       });
 
       // send user object and jwt token
+      res.header("Access-Control-Expose-Headers", "*");
       res.send(
         JSON.stringify({
           user: {
