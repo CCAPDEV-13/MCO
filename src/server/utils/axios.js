@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const http = axios.create({
-	baseURL: "https://localhost:3000",
+	baseURL: "https://edureview.onrender.com",
 	headers: {
 		"Access-Control-Allow-Origin": "*",
 	}
